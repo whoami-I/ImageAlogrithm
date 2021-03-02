@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         Timber.d("${AlgManager.getR(value)},${AlgManager.getB(value)},${AlgManager.getG(value)}")
         Timber.d(AlgManager.rgb2hsl(255, 36, 96).toString())
     }
+    fun test(){
+        //hsl 344, 1, 0.57
+        //rgb 255, 36, 96
+    }
 
     private fun initDataList() {
     }

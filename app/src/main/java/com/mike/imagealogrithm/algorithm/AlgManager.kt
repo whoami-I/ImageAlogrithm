@@ -7,6 +7,11 @@ import kotlin.math.max
 import kotlin.math.min
 
 object AlgManager {
+
+    init {
+        System.loadLibrary("filters")
+    }
+
     /**
      * h: 0-360
      * s: 0.0-1.0
@@ -208,10 +213,10 @@ object AlgManager {
     }
 
     fun addSaturation_n(v: Float, bitmap: Bitmap) {
-        nativeAddSaturation_n(v, bitmap, bitmap.width, bitmap.height)
+        nativeAddSaturationN(v, bitmap, bitmap.width, bitmap.height)
     }
 
-    external fun nativeAddSaturation_n(v: Float, bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeAddSaturationN(v: Float, bitmap: Bitmap, width: Int, height: Int)
 
     class HSL {
         constructor(h: Float, s: Float, l: Float) {

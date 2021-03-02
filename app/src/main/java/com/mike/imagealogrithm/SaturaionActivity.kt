@@ -3,6 +3,7 @@ package com.mike.imagealogrithm
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.widget.SeekBar
@@ -42,12 +43,11 @@ class SaturaionActivity : AppCompatActivity() {
                 progressDialog.show()
                 progressDialog.setCancelable(false)
                 lifecycleScope.launch(Dispatchers.IO) {
-                    AlgManager.addSaturation(v, tmpBitmap!!)
+                    val canvas = Canvas(tmpBitmap!!)
+                    canvas.drawBitmap(srcBitmap!!, 0.0f, 0.0f, null)
+                    AlgManager.addSaturation_n(v, tmpBitmap!!)
                     withContext(Dispatchers.Main.immediate) {
-                        val t = tmpBitmap
-                        tmpBitmap = srcBitmap
-                        srcBitmap = t
-                        img_preview.setImageBitmap(srcBitmap)
+                        img_preview.setImageBitmap(tmpBitmap)
                         Timber.d("complete process image")
                         progressDialog.dismiss()
                     }

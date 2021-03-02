@@ -35,13 +35,13 @@ typedef unsigned int Color;
 
 #define LOG(msg...) __android_log_print(ANDROID_LOG_VERBOSE, "NativeFilters", msg)
 
-#define JNIFUNCF(cls, name, vars...) Java_com_mike_imagealogrithm_AlgManager_ ## cls ## _ ## name(JNIEnv* env, jobject obj, vars)
+#define JNIFUNCF(cls, name, vars...) Java_com_mike_imagealogrithm_algorithm_ ## cls ## _ ## name(JNIEnv* env, jobject obj, vars)
 
 #define RED i
 #define GREEN i+1
 #define BLUE i+2
 #define ALPHA i+3
-#define CLAMP(c,min,max) (MAX(min, MIN(255, max)))
+#define CLAMP(c,min,max) (MAX(min, MIN(c, max)))
 
 __inline__ unsigned char  clamp(int c);
 __inline__ int clampMax(int c,int max);
