@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HSVActivity" />
+        <activity android:name=".HSLActivity" />
     </application>
 
 </manifest>
