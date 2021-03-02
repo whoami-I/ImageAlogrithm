@@ -1,6 +1,10 @@
 package com.mike.imagealogrithm.algorithm
 
+import android.graphics.Bitmap
+import java.nio.channels.FileLock
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 object AlgManager {
     /**
@@ -132,6 +136,61 @@ object AlgManager {
         return makeColor(float2Color(r), float2Color(g), float2Color(b))
     }
 
+    fun rgb2hsl(r: Int, g: Int, b: Int): HSL {
+        var rr = r / 255.0f
+        var gg = g / 255.0f
+        var bb = b / 255.0f
+        rr = if (rr > 1.0f) 1.0f else if (rr < 0f) 0f else rr
+        gg = if (gg > 1.0f) 1.0f else if (gg < 0f) 0f else gg
+        bb = if (bb > 1.0f) 1.0f else if (bb < 0f) 0f else bb
+        var h: Float = 0f
+        var s = 0f
+        var l = 0f
+        var max = max(rr, max(gg, bb))
+        var min = min(rr, min(gg, bb))
+        if (max.equals(min)) {
+            h = 0f
+        } else if (max.equals(rr) && gg >= bb) {
+            h = 60 * (gg - bb) / (max - min)
+        } else if (max.equals(rr) && gg < bb) {
+            h = 60 * (gg - bb) / (max - min) + 360
+        } else if (max.equals(gg)) {
+            h = 60 * (bb - rr) / (max - min) + 120
+        } else {
+            h = 60 * (rr - gg) / (max - min) + 240
+        }
+        l = (max + min) / 2f
+        if (l.equals(0f) || max.equals(min)) {
+            s = 0f
+        } else if (s > 0 && s <= 0.5f) {
+            s = (max - min) / (max + min)
+        } else {
+            s = (max - min) / (2 - (max + min))
+        }
+        return HSL(h, s, l)
+    }
+
+    fun addSaturation(v: Float, bitmap: Bitmap) {
+        if (!bitmap?.isRecycled) {
+            for (i in (0 until bitmap.width)) {
+                for (j in 0 until bitmap.height) {
+                    val pixel = bitmap.getPixel(i, j)
+                    val hsl = rgb2hsl(
+                        pixel shr 16 and 0xff,
+                        pixel shr 8 and 0xff,
+                        pixel and 0xff
+                    )
+                    hsl.s *= (1 + v)
+                    hsl.h = max(0f, min(hsl.h, 360f))
+                    hsl.s = max(0f, min(1f, hsl.s))
+                    hsl.l = max(0f, min(1f, hsl.l))
+                    val rgb = hsl2rgb(hsl.h, hsl.s, hsl.l)
+                    bitmap.setPixel(i, j, rgb or (0xff shl 24))
+                }
+            }
+        }
+    }
+
     fun float2Color(v: Float): Int {
         return (v * 255).toInt()
     }
@@ -146,5 +205,21 @@ object AlgManager {
 
     fun getB(color: Int): Int {
         return (color and 0xFF)
+    }
+
+    class HSL {
+        constructor(h: Float, s: Float, l: Float) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        var h: Float = 0F
+        var s: Float = 0F
+        var l: Float = 0F
+
+        override fun toString(): String {
+            return "h:$h   s:$s   l:$l"
+        }
     }
 }
