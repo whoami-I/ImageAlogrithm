@@ -40,6 +40,7 @@ class SaturaionActivity : AppCompatActivity() {
                 val v = seekBar!!.progress / 100f
                 val progressDialog = ProgressDialog(this@SaturaionActivity)
                 progressDialog.show()
+                progressDialog.setCancelable(false)
                 lifecycleScope.launch(Dispatchers.IO) {
                     AlgManager.addSaturation(v, tmpBitmap!!)
                     withContext(Dispatchers.Main.immediate) {

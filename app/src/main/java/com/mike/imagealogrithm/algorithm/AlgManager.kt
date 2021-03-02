@@ -207,6 +207,12 @@ object AlgManager {
         return (color and 0xFF)
     }
 
+    fun addSaturation_n(v: Float, bitmap: Bitmap) {
+        nativeAddSaturation_n(v, bitmap, bitmap.width, bitmap.height)
+    }
+
+    external fun nativeAddSaturation_n(v: Float, bitmap: Bitmap, width: Int, height: Int)
+
     class HSL {
         constructor(h: Float, s: Float, l: Float) {
             this.h = h
