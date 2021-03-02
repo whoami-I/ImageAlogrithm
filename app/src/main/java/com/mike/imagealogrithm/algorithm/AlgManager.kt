@@ -16,11 +16,11 @@ object AlgManager {
 
             val i: Int = floor(hh.toDouble()).toInt();
             val f: Float = hh - i
-            val p = v * (1 - s);
+            val p = v * (1 - s)
 
-            val q = v * (1 - s * f);
+            val q = v * (1 - s * f)
 
-            val t = v * (1 - s * (1 - f));
+            val t = v * (1 - s * (1 - f))
 
             when (i) {
                 0 -> {
