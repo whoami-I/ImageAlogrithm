@@ -29,6 +29,12 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "Negative",
             NegativeActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "GrayScale Log",
+            GrayScaleLogActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "GrayScale Gamma",
+            GammaActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

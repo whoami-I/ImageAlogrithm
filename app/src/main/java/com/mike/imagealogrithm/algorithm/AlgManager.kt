@@ -220,12 +220,22 @@ object AlgManager {
         nativeAddSaturationN(v, bitmap, bitmap.width, bitmap.height)
     }
 
+    fun gamma(g: Float, bitmap: Bitmap) {
+        nativeGrayScaleGamma(g, bitmap, bitmap.width, bitmap.height)
+    }
+
     fun negative(bitmap: Bitmap) {
         nativeNegative(bitmap, bitmap.width, bitmap.height)
     }
 
+    fun grayScaleLog(bitmap: Bitmap) {
+        nativeGrayScaleLog(bitmap, bitmap.width, bitmap.height)
+    }
+
     external fun nativeAddSaturationN(v: Float, bitmap: Bitmap, width: Int, height: Int)
     external fun nativeNegative(bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeGrayScaleLog(bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeGrayScaleGamma(v: Float, bitmap: Bitmap, width: Int, height: Int)
 
     class HSL {
         constructor(h: Float, s: Float, l: Float) {

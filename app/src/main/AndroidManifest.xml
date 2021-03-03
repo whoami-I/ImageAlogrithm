@@ -25,6 +25,8 @@
         <activity android:name=".HSLActivity" />
         <activity android:name=".SaturaionActivity" />
         <activity android:name=".NegativeActivity" />
+        <activity android:name=".GrayScaleLogActivity" />
+        <activity android:name=".GammaActivity" />
     </application>
 
 </manifest>

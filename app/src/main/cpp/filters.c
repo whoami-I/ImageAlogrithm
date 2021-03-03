@@ -1,4 +1,5 @@
 #include "filters.h"
+#include <math.h>
 
 void JNIFUNCF(AlgManager, nativeAddSaturationN, float saturation, jobject bitmap,
               jint width, jint height) {
@@ -119,6 +120,48 @@ void JNIFUNCF(AlgManager, nativeNegative, jobject bitmap,
         pixel[0] = (unsigned char) (255 - pixel[0]);
         pixel[1] = (unsigned char) (255 - pixel[1]);
         pixel[2] = (unsigned char) (255 - pixel[2]);
+    }
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+void JNIFUNCF(AlgManager, nativeGrayScaleLog, jobject bitmap,
+              jint width, jint height) {
+    unsigned char *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+    int tot_len = height * width * 4;
+    float value[256];
+    for (int i = 0; i < 256; ++i) {
+        value[i] = log2f(1 + i);
+    }
+    float max_norm = log2f(256) / 255.0f;
+    for (int i = 0; i < tot_len; i += 4) {
+        unsigned char *pixel = destination + i;
+        for (int j = 0; j < 3; ++j) {
+            float tmp = value[pixel[j]];
+            tmp = tmp / max_norm;
+            pixel[j] = (unsigned char) CLAMP(tmp, 0.0f, 255.0f);
+        }
+    }
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+void JNIFUNCF(AlgManager, nativeGrayScaleGamma, float gamma, jobject bitmap,
+              jint width, jint height) {
+    unsigned char *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+    int tot_len = height * width * 4;
+    float value[256];
+    for (int i = 0; i < 256; ++i) {
+        value[i] = powf(i, gamma);
+    }
+    float max_norm = value[255] / 255.0f;
+    for (int i = 0; i < tot_len; i += 4) {
+        unsigned char *pixel = destination + i;
+        for (int j = 0; j < 3; ++j) {
+            float tmp = value[pixel[j]];
+            tmp = tmp / max_norm;
+            pixel[j] = (unsigned char) CLAMP(tmp, 0.0f, 255.0f);
+        }
     }
     AndroidBitmap_unlockPixels(env, bitmap);
 }
