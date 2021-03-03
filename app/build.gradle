@@ -66,4 +66,5 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.permissionx.guolindev:permissionx:1.4.0'
 }

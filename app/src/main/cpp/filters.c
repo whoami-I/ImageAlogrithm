@@ -9,6 +9,7 @@ void JNIFUNCF(AlgManager, nativeAddSaturationN, float saturation, jobject bitmap
     for (int i = 0; i < tot_len; i += 4) {
         unsigned char *pixel = destination + i;
         rgb2hsl(pixel, hsl);
+        // add saturation for every pixel with same ratio
         hsl[1] *= (1.0f + saturation);
         hsl2rgb(hsl, pixel);
     }

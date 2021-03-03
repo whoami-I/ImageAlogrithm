@@ -12,7 +12,7 @@ object AlgManager {
         System.loadLibrary("filters")
     }
 
-    /**
+    /**hsv2rgb in Kotlin
      * h: 0-360
      * s: 0.0-1.0
      * v: 0-255
@@ -88,6 +88,7 @@ object AlgManager {
     }
 
     /**
+     * hsl2rgb in Kotlin
      * h: 0-360
      * s: 0.0-1.0
      * l: 0.0-1.0
@@ -141,6 +142,9 @@ object AlgManager {
         return makeColor(float2Color(r), float2Color(g), float2Color(b))
     }
 
+    /**
+     * rgb2hsl in Kotlin
+     */
     fun rgb2hsl(r: Int, g: Int, b: Int): HSL {
         var rr = r / 255.0f
         var gg = g / 255.0f
