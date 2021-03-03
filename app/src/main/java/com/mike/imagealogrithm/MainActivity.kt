@@ -26,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "Adjust saturation",
             SaturaionActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "Negative",
+            NegativeActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

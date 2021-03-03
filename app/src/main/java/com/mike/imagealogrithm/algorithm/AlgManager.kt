@@ -220,7 +220,12 @@ object AlgManager {
         nativeAddSaturationN(v, bitmap, bitmap.width, bitmap.height)
     }
 
+    fun negative(bitmap: Bitmap) {
+        nativeNegative(bitmap, bitmap.width, bitmap.height)
+    }
+
     external fun nativeAddSaturationN(v: Float, bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeNegative(bitmap: Bitmap, width: Int, height: Int)
 
     class HSL {
         constructor(h: Float, s: Float, l: Float) {

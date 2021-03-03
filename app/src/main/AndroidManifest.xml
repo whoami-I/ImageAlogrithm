@@ -24,6 +24,7 @@
         <activity android:name=".HSVActivity" />
         <activity android:name=".HSLActivity" />
         <activity android:name=".SaturaionActivity" />
+        <activity android:name=".NegativeActivity" />
     </application>
 
 </manifest>

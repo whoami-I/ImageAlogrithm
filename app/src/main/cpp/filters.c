@@ -108,3 +108,17 @@ void hsl2rgb(float *hsl, unsigned char *rgb) {
         }
     }
 }
+
+void JNIFUNCF(AlgManager, nativeNegative, jobject bitmap,
+              jint width, jint height) {
+    unsigned char *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+    int tot_len = height * width * 4;
+    for (int i = 0; i < tot_len; i += 4) {
+        unsigned char *pixel = destination + i;
+        pixel[0] = (unsigned char) (255 - pixel[0]);
+        pixel[1] = (unsigned char) (255 - pixel[1]);
+        pixel[2] = (unsigned char) (255 - pixel[2]);
+    }
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
