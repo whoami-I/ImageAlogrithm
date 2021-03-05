@@ -27,6 +27,7 @@
         <activity android:name=".NegativeActivity" />
         <activity android:name=".GrayScaleLogActivity" />
         <activity android:name=".GammaActivity" />
+        <activity android:name=".MeanBlurActivity" />
     </application>
 
 </manifest>

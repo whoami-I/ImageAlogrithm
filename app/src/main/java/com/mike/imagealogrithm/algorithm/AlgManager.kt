@@ -232,10 +232,15 @@ object AlgManager {
         nativeGrayScaleLog(bitmap, bitmap.width, bitmap.height)
     }
 
+    fun meanBlur(bitmap: Bitmap, size: Int) {
+        nativeFastMeanBlur(size, bitmap, bitmap.width, bitmap.height)
+    }
+
     external fun nativeAddSaturationN(v: Float, bitmap: Bitmap, width: Int, height: Int)
     external fun nativeNegative(bitmap: Bitmap, width: Int, height: Int)
     external fun nativeGrayScaleLog(bitmap: Bitmap, width: Int, height: Int)
     external fun nativeGrayScaleGamma(v: Float, bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeFastMeanBlur(szie_box: Int, bitmap: Bitmap, width: Int, height: Int)
 
     class HSL {
         constructor(h: Float, s: Float, l: Float) {

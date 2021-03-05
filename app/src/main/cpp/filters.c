@@ -1,5 +1,7 @@
 #include "filters.h"
 #include <math.h>
+#include <memory.h>
+#include <stdlib.h>
 
 void JNIFUNCF(AlgManager, nativeAddSaturationN, float saturation, jobject bitmap,
               jint width, jint height) {
@@ -9,9 +11,11 @@ void JNIFUNCF(AlgManager, nativeAddSaturationN, float saturation, jobject bitmap
     float hsl[3];
     for (int i = 0; i < tot_len; i += 4) {
         unsigned char *pixel = destination + i;
+        // first convert every pixel from rgb to hsl
         rgb2hsl(pixel, hsl);
         // add saturation for every pixel with same ratio
         hsl[1] *= (1.0f + saturation);
+        // second convert hsl to rgb
         hsl2rgb(hsl, pixel);
     }
 
@@ -165,3 +169,116 @@ void JNIFUNCF(AlgManager, nativeGrayScaleGamma, float gamma, jobject bitmap,
     }
     AndroidBitmap_unlockPixels(env, bitmap);
 }
+
+/**
+ * 均值模糊 ,一般算法，速度非常慢
+ * @param env
+ * @param obj
+ * @param box_size
+ * @param bitmap
+ * @param width
+ * @param height
+ */
+void JNIFUNCF(AlgManager, nativeMeanBlur, int box_size, jobject bitmap,
+              jint width, jint height) {
+
+    if (box_size > width || box_size > height) return;
+    unsigned int *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+
+    unsigned int *tmp = (unsigned int *) malloc((size_t) (4 * width * height));
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            unsigned int c = 0;
+            unsigned long long sum = 0;
+            for (int bi = -box_size / 2; bi < box_size / 2; ++bi) {
+                for (int bj = -box_size / 2; bj < box_size / 2; ++bj) {
+                    if (i + bi >= 0 && i + bi < width && j + bj >= 0 && j + bj < height) {
+                        c++;
+                        sum += destination[j * width + i];
+                    }
+                }
+            }
+            tmp[j * width + i] = (unsigned int) (sum / c);
+        }
+    }
+    LOG("long %d", (int) sizeof(long));
+    LOG("long long %d", (int) sizeof(long long));
+    memcpy(destination, tmp, (size_t) (4 * width * height));
+    free(tmp);
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+
+/**
+ * 均值模糊 ,快速算法，速度非常慢
+ * @param env
+ * @param obj
+ * @param box_size
+ * @param bitmap
+ * @param width
+ * @param height
+ */
+void JNIFUNCF(AlgManager, nativeFastMeanBlur, int box_size, jobject bitmap,
+              jint width, jint height) {
+
+    if (box_size > width || box_size > height) return;
+    unsigned int *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+
+    long long *tmp = (long long *) malloc((size_t) (sizeof(long long) * width * height));
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            long sum = 0;
+            sum += destination[j * width + i];
+            if (i - 1 >= 0) {
+                sum += tmp[j * width + i - 1];
+            }
+            if (j - 1 >= 0) {
+                sum += tmp[(j - 1) * width + i];
+            }
+            if (i - 1 >= 0 && j - 1 >= 0) {
+                sum -= tmp[(j - 1) * width + i - 1];
+            }
+            tmp[j * width + i] = sum;
+        }
+    }
+
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            int w = box_size / 2;
+            long top_left = 0;
+            long top_right = 0;
+            long bottom_left = 0;
+            long bottom_right = 0;
+            int col, row = 0;
+
+            col = j - w - 1;
+            row = i - w - 1;
+            if (col >= 0 && row >= 0) {
+                top_left = tmp[col * width + row];
+            }
+            col = j - w - 1;
+            row = i + w + 1;
+            if (col >= 0 && row < height) {
+                bottom_left = tmp[col * width + row];
+            }
+            col = j + w;
+            row = i - w - 1;
+            if (col < width && row >= 0) {
+                top_right = tmp[col * width + row];
+            }
+            col = j + w;
+            row = i + w;
+            if (col < width && row < height) {
+                top_right = tmp[col * width + row];
+            }
+            destination[j * width + i] = (unsigned int) (
+                    (bottom_right + top_left - top_right - bottom_left) / (box_size*box_size));
+        }
+    }
+
+    free(tmp);
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+

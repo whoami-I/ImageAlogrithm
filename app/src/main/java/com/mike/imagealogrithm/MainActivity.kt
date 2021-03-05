@@ -35,6 +35,9 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "GrayScale Gamma",
             GammaActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "均值模糊",
+            MeanBlurActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 
