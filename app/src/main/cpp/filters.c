@@ -274,11 +274,79 @@ void JNIFUNCF(AlgManager, nativeFastMeanBlur, int box_size, jobject bitmap,
                 top_right = tmp[col * width + row];
             }
             destination[j * width + i] = (unsigned int) (
-                    (bottom_right + top_left - top_right - bottom_left) / (box_size*box_size));
+                    (bottom_right + top_left - top_right - bottom_left) / (box_size * box_size));
         }
     }
 
     free(tmp);
     AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+
+void JNIFUNCF(AlgManager, nativeRobert, jobject bitmap,
+              jint width, jint height) {
+
+    unsigned int *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+
+    unsigned int *tmp1 = (unsigned int *) malloc((size_t) (4 * width * height));
+    unsigned int *tmp2 = (unsigned int *) malloc((size_t) (4 * width * height));
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            //当前遍历的点为左上角的点
+            int top_left = getGray((unsigned char *) (destination + j * width + i));
+            int bottom_left = 0;
+            int top_right = 0;
+            int bottom_right = 0;
+            if (j + 1 < height) {
+                bottom_left = getGray((unsigned char *) (destination + (j + 1) * width + i));
+            }
+            if (i + 1 < width) {
+                top_right = getGray((unsigned char *) (destination + j * width + i + 1));
+            }
+            if (j + 1 < height && i + 1 < width) {
+                bottom_right = getGray((unsigned char *) (destination + (j + 1) * width + i + 1));
+            }
+
+            int c = top_left - bottom_right;
+            c = CLAMP(c, 0, 255);
+            unsigned char *p = (unsigned char *) (tmp1 + j * width + i);
+            *p = (unsigned char) c;
+            *(p + 1) = (unsigned char) c;
+            *(p + 2) = (unsigned char) c;
+
+            c = bottom_left - top_right;
+            c = CLAMP(c, 0, 255);
+            p = (unsigned char *) (tmp2 + j * width + i);
+            *p = (unsigned char) c;
+            *(p + 1) = (unsigned char) c;
+            *(p + 2) = (unsigned char) c;
+        }
+    }
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            int c = getGray((unsigned char *) (tmp1 + j * width + i)) + getGray(
+                    (unsigned char *) (tmp2 + j * width + i));
+            c = CLAMP(c, 0, 255);
+            unsigned char *p = (unsigned char *) (destination + j * width + i);
+            *p = (unsigned char) c;
+            *(p + 1) = (unsigned char) c;
+            *(p + 2) = (unsigned char) c;
+        }
+    }
+    free(tmp1);
+    free(tmp2);
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+int getGray(unsigned char *p) {
+    int r = p[0];
+    int g = p[1];
+    int b = p[2];
+    return (unsigned char) ((r + g + b) / 3);
+}
+
+void setGray(unsigned char *p, unsigned char c) {
+    *p = c;
 }
 

@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "均值模糊",
             MeanBlurActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "Robert边缘检测",
+            RobertActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

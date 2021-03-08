@@ -232,6 +232,10 @@ object AlgManager {
         nativeGrayScaleLog(bitmap, bitmap.width, bitmap.height)
     }
 
+    fun robert(bitmap: Bitmap) {
+        nativeRobert(bitmap, bitmap.width, bitmap.height)
+    }
+
     fun meanBlur(bitmap: Bitmap, size: Int) {
         nativeFastMeanBlur(size, bitmap, bitmap.width, bitmap.height)
     }
@@ -239,6 +243,7 @@ object AlgManager {
     external fun nativeAddSaturationN(v: Float, bitmap: Bitmap, width: Int, height: Int)
     external fun nativeNegative(bitmap: Bitmap, width: Int, height: Int)
     external fun nativeGrayScaleLog(bitmap: Bitmap, width: Int, height: Int)
+    external fun nativeRobert(bitmap: Bitmap, width: Int, height: Int)
     external fun nativeGrayScaleGamma(v: Float, bitmap: Bitmap, width: Int, height: Int)
     external fun nativeFastMeanBlur(szie_box: Int, bitmap: Bitmap, width: Int, height: Int)
 
