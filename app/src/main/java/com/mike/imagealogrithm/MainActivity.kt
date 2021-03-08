@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "均值模糊",
             MeanBlurActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "opencv test",
+            OpencvActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

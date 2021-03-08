@@ -228,6 +228,10 @@ object AlgManager {
         nativeNegative(bitmap, bitmap.width, bitmap.height)
     }
 
+    fun opencvTest(bitmap: Bitmap) {
+        nativeGrayOpencv(bitmap, bitmap.width, bitmap.height)
+    }
+
     fun grayScaleLog(bitmap: Bitmap) {
         nativeGrayScaleLog(bitmap, bitmap.width, bitmap.height)
     }
@@ -241,6 +245,9 @@ object AlgManager {
     external fun nativeGrayScaleLog(bitmap: Bitmap, width: Int, height: Int)
     external fun nativeGrayScaleGamma(v: Float, bitmap: Bitmap, width: Int, height: Int)
     external fun nativeFastMeanBlur(szie_box: Int, bitmap: Bitmap, width: Int, height: Int)
+
+
+    external fun nativeGrayOpencv(bitmap: Bitmap, width: Int, height: Int)
 
     class HSL {
         constructor(h: Float, s: Float, l: Float) {
