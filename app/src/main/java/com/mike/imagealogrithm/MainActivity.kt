@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "Robert边缘检测",
             RobertActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "Prewitt边缘检测",
+            PrewittActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

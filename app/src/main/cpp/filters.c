@@ -227,25 +227,25 @@ void JNIFUNCF(AlgManager, nativeFastMeanBlur, int box_size, jobject bitmap,
     AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
 
     long long *tmp = (long long *) malloc((size_t) (sizeof(long long) * width * height));
-    for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
             long sum = 0;
-            sum += destination[j * width + i];
+            sum += destination[i * width + j];
             if (i - 1 >= 0) {
-                sum += tmp[j * width + i - 1];
+                sum += tmp[(i - 1) * width + j];
             }
             if (j - 1 >= 0) {
-                sum += tmp[(j - 1) * width + i];
+                sum += tmp[i * width + (j - 1)];
             }
             if (i - 1 >= 0 && j - 1 >= 0) {
-                sum -= tmp[(j - 1) * width + i - 1];
+                sum -= tmp[(i - 1) * width + j - 1];
             }
-            tmp[j * width + i] = sum;
+            tmp[i * width + j] = sum;
         }
     }
 
-    for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
             int w = box_size / 2;
             long top_left = 0;
             long top_right = 0;
@@ -256,24 +256,24 @@ void JNIFUNCF(AlgManager, nativeFastMeanBlur, int box_size, jobject bitmap,
             col = j - w - 1;
             row = i - w - 1;
             if (col >= 0 && row >= 0) {
-                top_left = tmp[col * width + row];
+                top_left = tmp[row * width + col];
             }
             col = j - w - 1;
             row = i + w + 1;
             if (col >= 0 && row < height) {
-                bottom_left = tmp[col * width + row];
+                bottom_left = tmp[row * width + col];
             }
             col = j + w;
             row = i - w - 1;
             if (col < width && row >= 0) {
-                top_right = tmp[col * width + row];
+                top_right = tmp[row * width + col];
             }
             col = j + w;
             row = i + w;
             if (col < width && row < height) {
-                top_right = tmp[col * width + row];
+                bottom_right = tmp[row * width + col];
             }
-            destination[j * width + i] = (unsigned int) (
+            destination[i * width + j] = (unsigned int) (
                     (bottom_right + top_left - top_right - bottom_left) / (box_size * box_size));
         }
     }
@@ -349,4 +349,86 @@ int getGray(unsigned char *p) {
 void setGray(unsigned char *p, unsigned char c) {
     *p = c;
 }
+
+void setIntValue(int *p, int c) {
+    *p = c;
+}
+
+int getRGBSum(int *p) {
+    unsigned char *cp = (unsigned char *) p;
+    int c = (int) (cp[0]) + cp[1] + cp[2];
+    return c;
+}
+
+// prewitt算法
+void JNIFUNCF(AlgManager, nativePrewitt, jobject bitmap,
+              jint width, jint height) {
+
+    int *destination = 0;
+    AndroidBitmap_lockPixels(env, bitmap, (void **) &destination);
+
+    int *tmp1 = (int *) malloc((size_t) (4 * width * height));
+    int *tmp2 = (int *) malloc((size_t) (4 * width * height));
+//    int m1[] = {-1, 0, 1, -2, 0, 1, -2, 0, 1};
+//    int m2[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+
+    int m1[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+    int m2[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+    //此处最边上没有作滤波，简化处理直接设置成0
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
+                *(tmp1 + i * width + j) = 0;
+            } else {
+                int sum = 0;
+                for (int m = -1; m <= 1; ++m) {
+                    for (int n = -1; n <= 1; ++n) {
+                        int c = getGray((unsigned char *) (destination + (i + m) * width + n + j));
+                        sum += m1[(m + 1) * 3 + n + 1] * c;
+                    }
+                }
+//                sum /= 3;
+                // 一定要加这一句，否则图片会偏白
+                sum = CLAMP(sum, 0, 255);
+                *(unsigned char *) (tmp1 + i * width + j) = (unsigned char) sum;
+            }
+        }
+    }
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
+                *(tmp2 + i * width + j) = 0;
+            } else {
+                int sum = 0;
+                for (int m = -1; m <= 1; ++m) {
+                    for (int n = -1; n <= 1; ++n) {
+                        int c = getGray((unsigned char *) (destination + (i + m) * width + n + j));
+                        sum += m2[(m + 1) * 3 + n + 1] * c;
+                    }
+                }
+//                sum /= 3;
+                sum = CLAMP(sum, 0, 255);
+                *(unsigned char *) (tmp2 + i * width + j) = (unsigned char) sum;
+            }
+        }
+    }
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            int c = (getGray((unsigned char *) (tmp1 + i * width + j)) + getGray(
+                    (unsigned char *) (tmp2 + i * width + j))) * 2; //此处乘2，这样将白色部分调亮
+            c = CLAMP(c, 0, 255);
+            unsigned char *p = (unsigned char *) (destination + i * width + j);
+            *p = (unsigned char) c;
+            *(p + 1) = (unsigned char) c;
+            *(p + 2) = (unsigned char) c;
+        }
+    }
+
+    free(tmp1);
+    free(tmp2);
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
 

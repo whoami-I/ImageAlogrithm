@@ -29,6 +29,7 @@
         <activity android:name=".GammaActivity" />
         <activity android:name=".MeanBlurActivity" />
         <activity android:name=".RobertActivity" />
+        <activity android:name=".PrewittActivity" />
     </application>
 
 </manifest>
