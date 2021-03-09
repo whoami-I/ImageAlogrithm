@@ -41,10 +41,12 @@ typedef unsigned int Color;
 #define GREEN i+1
 #define BLUE i+2
 #define ALPHA i+3
-#define CLAMP(c,min,max) (MAX(min, MIN(c, max)))
+#define CLAMP(c, min, max) (MAX(min, MIN(c, max)))
 
-__inline__ unsigned char  clamp(int c);
-__inline__ int clampMax(int c,int max);
+__inline__ unsigned char clamp(int c);
+
+__inline__ int clampMax(int c, int max);
+
 /**
 __inline__ unsigned char  clamp(int c){
     int N = 255;
@@ -63,6 +65,12 @@ __inline__ int clampMax(int c,int max){
     return  c;
 }
 */
-extern void rgb2hsl(unsigned char* rgb,float *hsl);
-extern void hsl2rgb(float *hsl,unsigned char *rgb);
+extern void rgb2hsl(unsigned char *rgb, float *hsl);
+
+extern void hsl2rgb(float *hsl, unsigned char *rgb);
+
+int getGray(unsigned char *p);
+
+void setGray(unsigned char *p, unsigned char);
+
 #endif // FILTERS_H

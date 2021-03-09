@@ -41,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         ), ItemDataBean(
             "opencv test",
             OpencvActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "Prewitt边缘检测",
+            PrewittActivity::class.java, ColorGenerator.getInstance().color
+        ), ItemDataBean(
+            "Robert边缘检测",
+            RobertActivity::class.java, ColorGenerator.getInstance().color
         )
     )
 

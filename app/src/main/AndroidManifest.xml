@@ -28,7 +28,8 @@
         <activity android:name=".GrayScaleLogActivity" />
         <activity android:name=".GammaActivity" />
         <activity android:name=".MeanBlurActivity" />
-        <activity android:name=".OpencvActivity" />
+        <activity android:name=".RobertActivity" />
+        <activity android:name=".PrewittActivity" />
     </application>
 
 </manifest>
